@@ -14,9 +14,9 @@ class UniversityScreen extends StatefulWidget {
 
 class _UniversityScreenState extends State<UniversityScreen> {
   final _custom = TextEditingController();
-  String? _preset;
 
   static const _presets = [
+    'Demo Campus',
     'State University',
     'Tech Institute',
     'Liberal Arts College',
@@ -30,7 +30,7 @@ class _UniversityScreenState extends State<UniversityScreen> {
 
   Future<void> _continue() async {
     final app = context.read<AppState>();
-    final u = (_preset ?? _custom.text.trim());
+    final u = _custom.text.trim();
     if (u.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Choose or enter a university')));
       return;
@@ -53,25 +53,59 @@ class _UniversityScreenState extends State<UniversityScreen> {
         children: [
           Text('Select university', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
-          ..._presets.map(
-            (p) => RadioListTile<String>(
-              value: p,
-              groupValue: _preset,
-              title: Text(p),
-              onChanged: (v) => setState(() {
-                _preset = v;
-                _custom.clear();
-              }),
-            ),
-          ),
-          const Divider(),
-          TextField(
-            controller: _custom,
-            decoration: const InputDecoration(
-              labelText: 'Or type your school name',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (_) => setState(() => _preset = null),
+          Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              final query = textEditingValue.text.trim().toLowerCase();
+              if (query.isEmpty) {
+                return _presets;
+              }
+              return _presets.where((u) => u.toLowerCase().contains(query));
+            },
+            onSelected: (String selection) {
+              _custom.text = selection;
+            },
+            fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+              if (_custom.text.isNotEmpty && textEditingController.text != _custom.text) {
+                textEditingController.text = _custom.text;
+              }
+              return TextField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                decoration: const InputDecoration(
+                  labelText: 'Search or type your university',
+                  hintText: 'Start typing to filter suggestions',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.search),
+                ),
+                onChanged: (value) => _custom.text = value,
+                onSubmitted: (_) => onFieldSubmitted(),
+              );
+            },
+            optionsViewBuilder: (context, onSelected, options) {
+              final items = options.toList(growable: false);
+              return Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 6,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 240, minWidth: 280),
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final option = items[index];
+                        return ListTile(
+                          dense: true,
+                          title: Text(option),
+                          onTap: () => onSelected(option),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(height: 24),
           FilledButton(onPressed: _continue, child: const Text('Continue')),

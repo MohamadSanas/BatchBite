@@ -15,7 +15,7 @@ class RegisterIn(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     email: EmailStr
     password: str = Field(min_length=6, max_length=128)
-    university: str = Field(min_length=1, max_length=255)
+    university: Optional[str] = Field(default=None, max_length=255)
 
     @field_validator("password")
     @classmethod
@@ -28,6 +28,10 @@ class RegisterIn(BaseModel):
 class LoginIn(BaseModel):
     email: EmailStr
     password: str
+
+
+class UniversityUpdateIn(BaseModel):
+    university: str = Field(min_length=1, max_length=255)
 
 
 class UserOut(BaseModel):
@@ -68,6 +72,7 @@ class SellerRequestOut(BaseModel):
 class FoodItemIn(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     price: float = Field(gt=0)
+    image_url: Optional[str] = Field(default=None, max_length=1024)
     available: bool = True
 
 
@@ -76,6 +81,7 @@ class FoodItemOut(BaseModel):
     seller_id: int
     name: str
     price: float
+    image_url: Optional[str] = None
     available: bool
 
     model_config = {"from_attributes": True}

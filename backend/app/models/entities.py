@@ -87,6 +87,7 @@ class FoodItem(Base):
     seller_id: Mapped[int] = mapped_column(ForeignKey("seller_profiles.id", ondelete="CASCADE"), index=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
+    image_url: Mapped[Optional[str]] = mapped_column(String(1024), nullable=True)
     available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     seller: Mapped["SellerProfile"] = relationship(back_populates="food_items")

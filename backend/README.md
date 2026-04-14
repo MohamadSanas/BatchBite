@@ -47,6 +47,9 @@ backend/
 - `SEED_ADMIN_EMAIL`: optional admin email for startup seeding
 - `SEED_ADMIN_PASSWORD`: optional admin password for startup seeding
 - `SEED_ADMIN_NAME`: optional admin display name
+- `SEED_DEMO_DATA`: set `true` to seed admin/sellers/buyers and sample foods
+- `DEMO_UNIVERSITY`: campus name for demo users
+- `DEMO_DEFAULT_PASSWORD`: password used for demo accounts
 
 ## Supabase Connection Example
 
@@ -56,6 +59,7 @@ Use Session Pooler for IPv4 environments:
 
 ## Notes
 
-- For Supabase pooler URLs, SQLAlchemy client-side pooling is disabled in `database.py` via `NullPool`.
+- For Supabase pooler URLs, SQLAlchemy client-side pooling is disabled in `app/database/session.py` via `NullPool`.
 - Database tables are created on startup (`Base.metadata.create_all`).
+- Food items support optional `image_url` at creation (`POST /food`).
 - For production maturity, next step is migration-first workflow via Alembic.

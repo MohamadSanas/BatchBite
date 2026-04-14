@@ -5,6 +5,7 @@ import '../models/seller_summary.dart';
 import '../services/api_service.dart';
 import '../state/app_state.dart';
 import 'seller_menu_screen.dart';
+import 'university_screen.dart';
 
 class HomeSellersScreen extends StatelessWidget {
   const HomeSellersScreen({super.key});
@@ -17,15 +18,27 @@ class HomeSellersScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Campus kitchens'),
         actions: [
+          TextButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UniversityScreen()));
+            },
+            icon: const Icon(Icons.location_city, size: 18),
+            label: const Text('Change'),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: Center(child: Text(uni, style: Theme.of(context).textTheme.labelMedium)),
+            child: Center(
+              child: Text(
+                uni.isEmpty ? 'All universities' : uni,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+            ),
           ),
         ],
       ),
       body: FutureBuilder<List<SellerSummary>>(
         key: ValueKey(uni),
-        future: api.listSellers(uni),
+        future: api.listSellers(uni.isEmpty ? null : uni),
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
@@ -35,7 +48,13 @@ class HomeSellersScreen extends StatelessWidget {
           }
           final list = snap.data ?? [];
           if (list.isEmpty) {
-            return const Center(child: Text('No approved sellers on this campus yet.'));
+            return Center(
+              child: Text(
+                uni.isEmpty
+                    ? 'No approved sellers available yet.'
+                    : 'No approved sellers on this campus yet.',
+              ),
+            );
           }
           return ListView.separated(
             itemCount: list.length,

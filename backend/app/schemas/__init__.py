@@ -21,6 +21,7 @@ from .dto import (
     SummaryFoodTotal,
     SummaryLocationGroup,
     TokenOut,
+    UniversityUpdateIn,
     UserOut,
 )
 
@@ -33,6 +34,7 @@ __all__ = [
     "KitchenUpdateIn",
     "SellerApproveIn",
     "SellerRequestOut",
+    "UniversityUpdateIn",
     "FoodItemIn",
     "FoodItemOut",
     "DeliveryLocationIn",

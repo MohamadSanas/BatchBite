@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'screens/auth_screen.dart';
 import 'screens/home_shell.dart';
-import 'screens/university_screen.dart';
 import 'services/api_service.dart';
 import 'state/app_state.dart';
 
@@ -45,9 +44,6 @@ class RootGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.watch<AppState>();
-    if (!app.hasUniversity) {
-      return const UniversityScreen();
-    }
     if (!app.isLoggedIn) {
       return const AuthScreen();
     }

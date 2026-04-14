@@ -48,7 +48,6 @@ class ApiService {
     required String name,
     required String email,
     required String password,
-    required String university,
   }) async {
     final r = await _client.post(
       _u('/auth/register'),
@@ -57,7 +56,6 @@ class ApiService {
         'name': name,
         'email': email,
         'password': password,
-        'university': university,
       }),
     );
     final j = await _decode(r) as Map<String, dynamic>;
@@ -80,8 +78,22 @@ class ApiService {
     return UserModel.fromJson(j);
   }
 
-  Future<List<SellerSummary>> listSellers(String university) async {
-    final r = await _client.get(_u('/sellers', {'university': university}), headers: _headers);
+  Future<UserModel> updateUniversity(String university) async {
+    final r = await _client.patch(
+      _u('/auth/me/university'),
+      headers: _headers,
+      body: jsonEncode({'university': university}),
+    );
+    final j = await _decode(r) as Map<String, dynamic>;
+    return UserModel.fromJson(j);
+  }
+
+  Future<List<SellerSummary>> listSellers([String? university]) async {
+    final query = <String, String>{};
+    if (university != null && university.trim().isNotEmpty) {
+      query['university'] = university.trim();
+    }
+    final r = await _client.get(_u('/sellers', query.isEmpty ? null : query), headers: _headers);
     final j = await _decode(r) as List<dynamic>;
     return j.map((e) => SellerSummary.fromJson(e as Map<String, dynamic>)).toList();
   }

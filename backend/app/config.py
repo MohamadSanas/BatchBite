@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     SEED_ADMIN_EMAIL: Optional[str] = None
     SEED_ADMIN_PASSWORD: Optional[str] = None
     SEED_ADMIN_NAME: str = "System Admin"
+    SEED_DEMO_DATA: bool = False
+    DEMO_UNIVERSITY: str = "Demo Campus"
+    DEMO_DEFAULT_PASSWORD: str = "Demo@12345"
 
     @field_validator("DATABASE_URL")
     @classmethod

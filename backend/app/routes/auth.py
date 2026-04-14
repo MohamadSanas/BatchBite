@@ -6,7 +6,7 @@ from app.core.security import create_access_token, hash_password, verify_passwor
 from app.database import get_db
 from app.deps import CurrentUser
 from app.models import User, UserRole
-from app.schemas import LoginIn, RegisterIn, TokenOut, UserOut
+from app.schemas import LoginIn, RegisterIn, TokenOut, UniversityUpdateIn, UserOut
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -28,7 +28,7 @@ def register(body: RegisterIn, db: Session = Depends(get_db)):
         name=body.name,
         email=body.email.lower(),
         password_hash=hash_password(body.password),
-        university=body.university,
+        university=(body.university or "").strip(),
         role=role,
     )
     db.add(user)
@@ -48,4 +48,12 @@ def login(body: LoginIn, db: Session = Depends(get_db)):
 
 @router.get("/me", response_model=UserOut)
 def me(user: CurrentUser):
+    return user
+
+
+@router.patch("/me/university", response_model=UserOut)
+def update_university(body: UniversityUpdateIn, user: CurrentUser, db: Session = Depends(get_db)):
+    user.university = body.university.strip()
+    db.commit()
+    db.refresh(user)
     return user

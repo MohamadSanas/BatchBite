@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../state/app_state.dart';
 import 'home_shell.dart';
-import 'university_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -41,11 +40,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     try {
       await app.login(_loginEmail.text.trim(), _loginPass.text);
       if (!mounted) return;
-      if (!app.hasUniversity) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const UniversityScreen()));
-      } else {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeShell()));
-      }
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeShell()));
     } catch (e) {
       setState(() => _error = e.toString());
     } finally {
@@ -54,11 +49,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
 
   Future<void> _register(AppState app) async {
-    final uni = app.university;
-    if (uni == null || uni.isEmpty) {
-      setState(() => _error = 'Select your university first');
-      return;
-    }
     setState(() {
       _busy = true;
       _error = null;
@@ -68,7 +58,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         name: _regName.text.trim(),
         email: _regEmail.text.trim(),
         password: _regPass.text,
-        uni: uni,
       );
       if (!mounted) return;
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeShell()));
@@ -130,8 +119,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              Text('University: ${app.university ?? "not set — go back and pick campus"}'),
-              const SizedBox(height: 12),
               TextField(controller: _regName, decoration: const InputDecoration(labelText: 'Full name')),
               const SizedBox(height: 12),
               TextField(

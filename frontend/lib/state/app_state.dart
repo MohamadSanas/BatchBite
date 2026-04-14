@@ -60,14 +60,18 @@ class AppState extends ChangeNotifier {
     final p = await SharedPreferences.getInstance();
     await p.setString(_kUniversity, u);
     if (user != null && user!.university != u) {
-      user = UserModel(
-        id: user!.id,
-        name: user!.name,
-        email: user!.email,
-        university: u,
-        role: user!.role,
-        isVerifiedSeller: user!.isVerifiedSeller,
-      );
+      try {
+        user = await _api.updateUniversity(u);
+      } catch (_) {
+        user = UserModel(
+          id: user!.id,
+          name: user!.name,
+          email: user!.email,
+          university: u,
+          role: user!.role,
+          isVerifiedSeller: user!.isVerifiedSeller,
+        );
+      }
     }
     notifyListeners();
   }
@@ -86,9 +90,8 @@ class AppState extends ChangeNotifier {
     required String name,
     required String email,
     required String password,
-    required String uni,
   }) async {
-    await _api.register(name: name, email: email, password: password, university: uni);
+    await _api.register(name: name, email: email, password: password);
     await login(email, password);
   }
 

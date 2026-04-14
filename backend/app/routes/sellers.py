@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from app.database import get_db
 from app.models import SellerProfile, User
@@ -18,12 +19,11 @@ class SellerListOut(BaseModel):
 
 
 @router.get("", response_model=list[SellerListOut])
-def list_sellers(university: str = Query(..., min_length=1), db: Session = Depends(get_db)):
-    q = (
-        select(SellerProfile, User)
-        .join(User, SellerProfile.user_id == User.id)
-        .where(User.university == university, SellerProfile.approved.is_(True))
-    )
+def list_sellers(university: Optional[str] = Query(default=None), db: Session = Depends(get_db)):
+    q = select(SellerProfile, User).join(User, SellerProfile.user_id == User.id).where(SellerProfile.approved.is_(True))
+    if university and university.strip():
+        q = q.where(User.university == university.strip())
+    q = q.order_by(User.university.asc(), SellerProfile.kitchen_name.asc())
     rows = db.execute(q).all()
     return [
         SellerListOut(
