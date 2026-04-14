@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+backend/venv/
+
+# Environment files
+.env
+.env.*
+backend/.env
+
+# Local databases and logs
+*.db
+backend/campus_food.db
+*.log
+
+# Flutter/Dart
+frontend/.dart_tool/
+frontend/build/
+
+# IDE
+.vscode/
+.idea/
